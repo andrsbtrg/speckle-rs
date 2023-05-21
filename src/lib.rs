@@ -1,4 +1,4 @@
-use reqwest::header::{ACCEPT, ACCEPT_ENCODING, CONTENT_TYPE, USER_AGENT};
+use reqwest::header::{ACCEPT, CONTENT_TYPE, USER_AGENT};
 use serde::Serialize;
 use serde_json::Value;
 use std::{format, io::Read, println};
