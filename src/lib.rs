@@ -1,3 +1,4 @@
+pub mod graphql;
 use reqwest::{
     blocking::Response,
     header::{ACCEPT, CONTENT_TYPE, USER_AGENT},
@@ -69,6 +70,10 @@ impl ObjectLoader {
             },
             None => return None,
         };
+        // debug write
+        let mut output = File::create("root.json").unwrap();
+
+        write!(output, "{}", &root_obj_json).unwrap();
         let root_obj: Value = serde_json::from_str(&root_obj_json).unwrap();
 
         // Return the ids as a list of strings
