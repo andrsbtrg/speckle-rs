@@ -1,4 +1,4 @@
-use speckle_rs::graphql::GraphQlBuilder;
+use speckle_rs::graphql;
 use speckle_rs::ObjectLoader;
 
 fn main() {
@@ -24,11 +24,11 @@ fn main() {
 }
 
 fn graphql(stream_id: &str, object_id: &str) {
-    let request = GraphQlBuilder::new(stream_id.to_string(), object_id.to_string())
+    let request = graphql::QueryBuilder::new(stream_id, object_id)
         .where_equals("level.name", "5FL")
         .select("type")
-        .build();
+        .build()
+        .json();
 
-    let request_string = request.json();
-    println!("{}", request_string);
+    println!("{}", request);
 }

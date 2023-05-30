@@ -14,19 +14,19 @@ query ($stream_id: String!, $object_id: String!, $my_query:[JSONObject!], $my_se
 }
 ";
 #[derive(Default)]
-pub struct GraphQlBuilder {
+pub struct QueryBuilder {
     _stream_id: String,
     _object_id: String,
     _queries: Vec<SpeckleQuery>,
     _select: Vec<String>,
 }
 
-impl GraphQlBuilder {
+impl QueryBuilder {
     pub fn new(_stream_id: impl Into<String>, _object_id: impl Into<String>) -> Self {
         Self {
             _stream_id: _stream_id.into(),
             _object_id: _object_id.into(),
-            ..GraphQlBuilder::default()
+            ..QueryBuilder::default()
         }
     }
 
