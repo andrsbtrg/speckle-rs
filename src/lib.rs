@@ -49,10 +49,8 @@ impl ObjectLoader {
                 println!("Url: {}", res.url());
                 println!("Status: {}", res.status());
                 match res.status() {
-                    StatusCode::OK => {
-                        return Some(res);
-                    }
-                    _ => return None,
+                    StatusCode::OK => Some(res),
+                    _ => None,
                 }
             }
             Err(_) => None,

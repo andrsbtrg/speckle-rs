@@ -1,5 +1,34 @@
+use std::io::Read;
+
 use serde::Serialize;
 
+pub struct GQLClient {
+    client: reqwest::blocking::Client,
+    token: String,
+}
+impl GQLClient {
+    pub fn new(token: impl Into<String>) -> Self {
+        GQLClient {
+            token: token.into(),
+            client: reqwest::blocking::Client::new(),
+        }
+    }
+    pub fn send_query(self, request: impl Into<String>) -> Option<String> {
+        let response = self
+            .client
+            .post("https://speckle.xyz/graphql")
+            .bearer_auth(&self.token)
+            .body(request.into())
+            .header(reqwest::header::CONTENT_TYPE, "application/json")
+            .send();
+        let mut response_string = String::new();
+        match response {
+            Ok(mut res) => res.read_to_string(&mut response_string).unwrap(),
+            Err(_) => return None,
+        };
+        Some(response_string)
+    }
+}
 #[derive(Serialize, Default)]
 pub struct GQLRequest {
     query: String,

@@ -24,6 +24,7 @@ fn main() {
 }
 
 fn graphql(stream_id: &str, object_id: &str) {
+    let client = graphql::GQLClient::new("420872d4db7bbeb7c6c543f18435b4ad7ae96d1917");
     let request = graphql::QueryBuilder::new(stream_id, object_id)
         .where_equals("level.name", "5FL")
         .select("type")
@@ -31,4 +32,9 @@ fn graphql(stream_id: &str, object_id: &str) {
         .json();
 
     println!("{}", request);
+
+    match client.send_query(request) {
+        Some(res) => println!("{}", res),
+        None => println!("Error"),
+    }
 }
