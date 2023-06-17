@@ -45,8 +45,8 @@ impl GQLRequest {
 struct Variables {
     object_id: String,
     stream_id: String,
-    my_query: Vec<SpeckleQuery>,
-    my_select: Vec<String>,
+    query: Vec<SpeckleQuery>,
+    select: Vec<String>,
 }
 
 #[derive(Serialize, Clone)]
@@ -124,8 +124,8 @@ impl QueryBuilder {
             variables: Variables {
                 object_id: self._object_id.clone(),
                 stream_id: self._stream_id.clone(),
-                my_query: self._queries.clone(),
-                my_select: self._select.clone(),
+                query: self._queries.clone(),
+                select: self._select.clone(),
             },
         }
     }
