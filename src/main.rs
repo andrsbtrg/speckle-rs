@@ -3,12 +3,11 @@ use speckle_rs::ObjectLoader;
 
 fn main() {
     let stream_id = "a41ecf35bc";
-    let object_id = "5ac251da6ca7e2be1c90ef3a33ba4655";
-    let token = "420872d4db7bbeb7c6c543f18435b4ad7ae96d1917";
+    let object_id = "158bae7429eaf49e44da0f7ba8e69779";
 
     graphql(stream_id, object_id);
 
-    let object_loader = ObjectLoader::new(stream_id, object_id, token);
+    let object_loader = ObjectLoader::new(stream_id, object_id, "");
 
     let object_iterator = object_loader
         .get_raw_object_iterator()
