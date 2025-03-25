@@ -2,3 +2,4 @@
 /Cargo.lock
 response.json
 root.json
+.env

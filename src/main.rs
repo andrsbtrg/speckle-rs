@@ -1,13 +1,20 @@
+use dotenv::dotenv;
 use speckle_rs::graphql;
 use speckle_rs::ObjectLoader;
 
 fn main() {
-    let stream_id = "a41ecf35bc";
-    let object_id = "158bae7429eaf49e44da0f7ba8e69779";
+    dotenv().ok();
 
-    graphql(stream_id, object_id);
+    let project_id = std::env::args().nth(1).expect("no project_id given");
+    let object_id = std::env::args().nth(2).expect("no object_id given");
 
-    let object_loader = ObjectLoader::new(stream_id, object_id, "");
+    let token = std::env::var("TOKEN").unwrap_or("".to_string());
+    // graphql(stream_id, object_id);
+    if token.is_empty() {
+        println!("WARN: no token given.");
+    }
+
+    let object_loader = ObjectLoader::new(&project_id, &object_id, &token);
 
     let object_iterator = object_loader
         .get_raw_object_iterator()

@@ -14,6 +14,7 @@ use std::{
 };
 
 pub struct ObjectLoader {
+    base_url: String,
     stream_id: String,
     object_id: String,
     token: String,
@@ -27,6 +28,7 @@ struct RequestObject {
 impl ObjectLoader {
     pub fn new(stream_id: &str, object_id: &str, token: &str) -> Self {
         ObjectLoader {
+            base_url: "https://app.speckle.systems".to_string(),
             stream_id: stream_id.to_string(),
             object_id: object_id.to_string(),
             token: token.to_string(),
@@ -38,8 +40,8 @@ impl ObjectLoader {
         match self
             .client
             .get(format!(
-                "https://speckle.xyz/objects/{}/{}/single",
-                &self.stream_id, &self.object_id
+                "{}/objects/{}/{}/single",
+                &self.base_url, &self.stream_id, &self.object_id
             ))
             .bearer_auth(&self.token)
             .header(reqwest::header::ACCEPT, "text/plain")
@@ -85,7 +87,7 @@ impl ObjectLoader {
 
     pub fn fetch_objects(&self, object_iterator: Vec<String>) -> Result<Response, reqwest::Error> {
         let raw_objects_json = serde_json::to_string(&object_iterator).unwrap();
-        println!("Fetching all child objects: \n{}", &raw_objects_json);
+        println!("Fetching all child objects");
 
         let request_object = RequestObject {
             objects: raw_objects_json,
@@ -95,11 +97,11 @@ impl ObjectLoader {
         let res = self
             .client
             .post(format!(
-                "https://speckle.xyz/api/getobjects/{}",
-                self.stream_id
+                "{}/api/getobjects/{}",
+                self.base_url, self.stream_id
             ))
-            .header(USER_AGENT, "mememe") // fails without user agent
-            .header(ACCEPT, "application.json")
+            .header(USER_AGENT, "Rust client") // fails without user agent
+            .header(ACCEPT, "text/plain")
             .header(CONTENT_TYPE, "application/json")
             .bearer_auth(&self.token)
             .body(request_body)
@@ -111,7 +113,7 @@ impl ObjectLoader {
         Ok(res)
     }
     pub fn store_response(&self, mut res: Response) -> Result<(), std::io::Error> {
-        let save_path: &str = "response.json";
+        let save_path: &str = "response.txt";
         println!("Storing response in ./{}", save_path);
 
         let mut body = String::new();
@@ -119,6 +121,8 @@ impl ObjectLoader {
         let mut output = File::create(save_path)?;
 
         write!(output, "{}", body)?;
+
+        println!("Reponse stored in ./{}", save_path);
         Ok(())
     }
 }
