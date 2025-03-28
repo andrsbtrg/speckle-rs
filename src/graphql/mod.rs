@@ -16,7 +16,7 @@ impl GQLClient {
     pub fn send_query(self, request: impl Into<String>) -> Option<String> {
         let response = self
             .client
-            .post("https://speckle.xyz/graphql")
+            .post("https://app.speckle.systems/graphql")
             .bearer_auth(&self.token)
             .body(request.into())
             .header(reqwest::header::CONTENT_TYPE, "application/json")
@@ -120,27 +120,32 @@ impl QueryBuilder {
 
     pub fn build(&self) -> GQLRequest {
         GQLRequest {
-            query: BASE_QUERY.to_string(),
+            query: base_query("id"),
             variables: Variables {
-                object_id: self._object_id.clone(),
-                stream_id: self._stream_id.clone(),
-                query: self._queries.clone(),
-                select: self._select.clone(),
+                object_id: self._object_id.to_owned(),
+                stream_id: self._stream_id.to_owned(),
+                query: self._queries.to_owned(),
+                select: self._select.to_owned(),
             },
         }
     }
 }
 
-const BASE_QUERY: &str = "
-query ($stream_id: String!, $object_id: String!, $my_query:[JSONObject!], $my_select: [String]) {
-  stream(id: $stream_id) {
-    object(id: $object_id) {
-      children(query: $my_query select: $my_select) {
-        objects {
-          data
-        }
-      }
-    }
-  }
+fn base_query(inner: &str) -> String {
+    return format!(
+        "
+query ($stream_id: String!, $object_id: String!, $my_query:[JSONObject!], $my_select: [String]) {{
+  stream(id: $stream_id) {{
+    object(id: $object_id) {{
+      children(query: $my_query select: $my_select) {{
+        objects {{ 
+            {}
+        }}
+      }}
+    }}
+  }}
+}}
+",
+        inner
+    );
 }
-";

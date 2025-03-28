@@ -70,10 +70,6 @@ impl ObjectLoader {
             },
             None => return None,
         };
-        // debug write
-        let mut output = File::create("root.json").unwrap();
-
-        write!(output, "{}", &root_obj_json).unwrap();
         let root_obj: Value = serde_json::from_str(&root_obj_json).unwrap();
 
         // Return the ids as a list of strings
@@ -113,16 +109,16 @@ impl ObjectLoader {
         Ok(res)
     }
     pub fn store_response(&self, mut res: Response) -> Result<(), std::io::Error> {
-        let save_path: &str = "response.txt";
-        println!("Storing response in ./{}", save_path);
+        let save_path = format!("{}.txt", &self.object_id);
+        println!("Storing response in {}", &save_path);
 
         let mut body = String::new();
         res.read_to_string(&mut body)?;
-        let mut output = File::create(save_path)?;
+        let mut output = File::create(&save_path)?;
 
         write!(output, "{}", body)?;
 
-        println!("Reponse stored in ./{}", save_path);
+        println!("Reponse stored in {}", save_path);
         Ok(())
     }
 }

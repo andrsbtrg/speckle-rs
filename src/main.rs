@@ -14,7 +14,25 @@ fn main() {
         println!("WARN: no token given.");
     }
 
-    let object_loader = ObjectLoader::new(&project_id, &object_id, &token);
+    // download_object(&project_id, &object_id, &token);
+    let client = graphql::GQLClient::new(&token);
+    let request = graphql::QueryBuilder::new(project_id, object_id)
+        .where_equals("speckle_type", "Objects.Geometry.Brep")
+        .select("id")
+        .build()
+        .json();
+
+    println!("{}", request);
+
+    match client.send_query(request) {
+        Some(res) => println!("{}", res),
+        None => println!("Error"),
+    }
+}
+
+#[allow(dead_code)]
+fn download_object(project_id: &str, object_id: &str, token: &str) {
+    let object_loader = ObjectLoader::new(project_id, object_id, token);
 
     let object_iterator = object_loader
         .get_raw_object_iterator()
@@ -27,20 +45,4 @@ fn main() {
     object_loader
         .store_response(object_response)
         .expect("Unable to store object");
-}
-
-fn graphql(stream_id: &str, object_id: &str) {
-    let client = graphql::GQLClient::new("420872d4db7bbeb7c6c543f18435b4ad7ae96d1917");
-    let request = graphql::QueryBuilder::new(stream_id, object_id)
-        .where_equals("level.name", "5FL")
-        .select("type")
-        .build()
-        .json();
-
-    println!("{}", request);
-
-    match client.send_query(request) {
-        Some(res) => println!("{}", res),
-        None => println!("Error"),
-    }
 }
